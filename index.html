@@ -1,56 +1,66 @@
-import React, { useState } from "react";
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>صفحتي الشخصية</title>
+    <style>
+        body { text-align: center; font-family: Arial, sans-serif; direction: rtl; }
+        img { max-width: 200px; border-radius: 10px; margin-top: 20px; }
+        #adminControls { display: none; margin-top: 20px; }
+    </style>
+</head>
+<body>
 
-const correctPassword = "1234"; // قم بتغييرها لكلمة المرور التي تريدها
+    <h2>صفحتي الشخصية</h2>
 
-export default function PersonalWebsite() {
-  const [password, setPassword] = useState("");
-  const [loggedIn, setLoggedIn] = useState(false);
-  const [image, setImage] = useState(localStorage.getItem("profileImage") || "https://via.placeholder.com/150");
-
-  const handleLogin = () => {
-    if (password === correctPassword) {
-      setLoggedIn(true);
-    } else {
-      alert("كلمة المرور غير صحيحة");
-    }
-  };
-
-  const handleImageUpload = (event) => {
-    const file = event.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setImage(reader.result);
-        localStorage.setItem("profileImage", reader.result);
-      };
-      reader.readAsDataURL(file);
-    }
-  };
-
-  return (
-    <div style={{ textAlign: "center", padding: "20px" }}>
-      <h1>مرحبًا بك في موقعي الشخصي</h1>
-      <img
-        src={image}
-        alt="Profile"
-        style={{ width: "150px", height: "150px", borderRadius: "50%", border: "2px solid black" }}
-      />
-      {loggedIn ? (
-        <div>
-          <input type="file" accept="image/*" onChange={handleImageUpload} />
-        </div>
-      ) : (
-        <div>
-          <p>يجب تسجيل الدخول لتعديل الصورة</p>
-          <input
-            type="password"
-            placeholder="أدخل كلمة المرور"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
-          <button onClick={handleLogin}>تسجيل الدخول</button>
-        </div>
-      )}
+    <!-- عرض الصورة -->
+    <img id="profileImage" src="default.jpg" alt="صورتي الشخصية">
+    
+    <!-- قسم تسجيل الدخول -->
+    <div id="loginSection">
+        <input type="password" id="passwordInput" placeholder="أدخل كلمة السر">
+        <button onclick="login()">تسجيل الدخول</button>
     </div>
-  );
-}
+
+    <!-- أدوات المدير (تحميل صورة) -->
+    <div id="adminControls">
+        <input type="file" id="imageInput" accept="image/*" onchange="uploadImage()">
+    </div>
+
+    <script>
+        const correctPassword = "1234"; // قم بتغييرها لكلمة مرورك الخاصة
+
+        // تحميل الصورة المحفوظة إذا وُجدت
+        window.onload = function() {
+            const savedImage = localStorage.getItem("profileImage");
+            if (savedImage) {
+                document.getElementById("profileImage").src = savedImage;
+            }
+        };
+
+        function login() {
+            const password = document.getElementById("passwordInput").value;
+            if (password === correctPassword) {
+                document.getElementById("adminControls").style.display = "block";
+                document.getElementById("loginSection").style.display = "none";
+            } else {
+                alert("كلمة المرور غير صحيحة!");
+            }
+        }
+
+        function uploadImage() {
+            const file = document.getElementById("imageInput").files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    document.getElementById("profileImage").src = event.target.result;
+                    localStorage.setItem("profileImage", event.target.result); // حفظ الصورة
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+    </script>
+
+</body>
+</html>
