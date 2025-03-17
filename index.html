@@ -85,4 +85,96 @@
         <input type="file" id="imageUpload" accept="image/*">
         <br>
     </div>
-    <img id="profile
+    <img id="profileImage" src="" class="hidden">
+
+    <button onclick="toggleSection('personalInfo')">البيانات الشخصية</button>
+    <div id="personalInfo" class="content hidden">
+        <p><strong>العنوان:</strong> <span class="editable" id="address">المملكة العربية السعودية – عرعر</span></p>
+        <p><strong>رقم الهاتف:</strong> <span class="editable" id="phone">966539670969</span></p>
+        <p><strong>البريد الإلكتروني:</strong> <span class="editable" id="email">mohamedyosif6@gmail.com</span></p>
+        <p><strong>تاريخ الميلاد:</strong> <span class="editable" id="dob">February 9, 1992</span></p>
+        <p><strong>الجنسية:</strong> <span class="editable" id="nationality">سوداني</span></p>
+    </div>
+
+    <button onclick="toggleSection('education')">التعليم</button>
+    <div id="education" class="content hidden">
+        <ul>
+            <li class="editable" id="edu1">ماجستير هندسة الإتصالات، جامعة العلوم والتقانة، 2018</li>
+            <li class="editable" id="edu2">بكالاريوس هندسة النظم الإلكترونية والحاسوب مرتبة الشرف، جامعة العلوم والتقانة، كلية الهندسة، 2015</li>
+        </ul>
+    </div>
+
+    <button onclick="toggleSection('experience')">الخبرات</button>
+    <div id="experience" class="content hidden">
+        <h3>الوظيفة بدوام كامل (2019-2023)</h3>
+        <p><strong>جامعة العلوم والتكنولوجيا</strong> – كلية الهندسة – قسم هندسة النظم الإلكترونية والحاسوب، أم درمان، السودان.</p>
+        <p><strong>المسمى الوظيفي:</strong> <span class="editable" id="jobTitle">محاضر</span></p>
+    </div>
+
+    <button id="editBtn" class="hidden" onclick="enableEditing()">تعديل البيانات</button>
+    <button id="saveBtn" class="hidden save-btn" onclick="saveData()">حفظ التعديلات</button>
+</section>
+
+<script>
+    const correctPassword = "1234"; // قم بتغييرها لكلمة المرور التي تريدها
+
+    function checkPassword() {
+        const inputPassword = document.getElementById("passwordInput").value;
+        if (inputPassword === correctPassword) {
+            document.getElementById("loginSection").classList.add("hidden");
+            document.getElementById("mainContent").classList.remove("hidden");
+            document.getElementById("adminControls").classList.remove("hidden"); 
+            document.getElementById("editBtn").classList.remove("hidden"); // عرض زر التعديل
+        } else {
+            document.getElementById("errorMessage").classList.remove("hidden");
+        }
+    }
+
+    function toggleSection(id) {
+        var section = document.getElementById(id);
+        section.classList.toggle("hidden");
+    }
+
+    document.getElementById('imageUpload').addEventListener('change', function(event) {
+        var file = event.target.files[0];
+        if (file) {
+            var reader = new FileReader();
+            reader.onload = function(e) {
+                var img = document.getElementById('profileImage');
+                img.src = e.target.result;
+                img.classList.remove("hidden");
+            }
+            reader.readAsDataURL(file);
+        }
+    });
+
+    function enableEditing() {
+        document.querySelectorAll('.editable').forEach(element => {
+            let input = document.createElement("input");
+            input.type = "text";
+            input.value = element.innerText;
+            input.className = "input-field";
+            input.dataset.id = element.id;
+            element.replaceWith(input);
+        });
+
+        document.getElementById("saveBtn").classList.remove("hidden"); 
+        document.getElementById("editBtn").classList.add("hidden"); 
+    }
+
+    function saveData() {
+        document.querySelectorAll('.input-field').forEach(input => {
+            let span = document.createElement("span");
+            span.className = "editable";
+            span.id = input.dataset.id;
+            span.innerText = input.value;
+            input.replaceWith(span);
+        });
+
+        document.getElementById("editBtn").classList.remove("hidden");
+        document.getElementById("saveBtn").classList.add("hidden");
+    }
+</script>
+
+</body>
+</html>
