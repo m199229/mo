@@ -3,82 +3,127 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>صفحتي الشخصية</title>
+    <title>لعبة تجنب العقبات</title>
     <style>
-        body { text-align: center; font-family: Arial, sans-serif; direction: rtl; }
-        img { max-width: 200px; border-radius: 10px; margin-top: 20px; }
-        #adminControls { display: none; margin-top: 20px; }
-        #loginSection, #guestSection { margin-top: 20px; }
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background-color: #f0f0f0;
+        }
+        #gameCanvas {
+            display: block;
+            background-color: #87CEEB;
+            margin: auto;
+            border: 2px solid black;
+        }
+        .game-over {
+            font-size: 30px;
+            color: red;
+            text-align: center;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-family: Arial, sans-serif;
+        }
     </style>
 </head>
 <body>
 
-    <h2>صفحتي الشخصية</h2>
+<canvas id="gameCanvas" width="800" height="600"></canvas>
+<div class="game-over" id="gameOverMessage" style="display: none;">لقد خسرت! اضغط للعودة</div>
 
-    <!-- عرض الصورة -->
-    <img id="profileImage" src="default.jpg" alt="صورتي الشخصية">
-    
-    <!-- قسم تسجيل الدخول -->
-    <div id="loginSection">
-        <input type="password" id="passwordInput" placeholder="أدخل كلمة السر">
-        <button onclick="login()">تسجيل الدخول</button>
-    </div>
+<script>
+    const canvas = document.getElementById("gameCanvas");
+    const ctx = canvas.getContext("2d");
+    const playerWidth = 50, playerHeight = 50;
+    let playerX = canvas.width / 2 - playerWidth / 2;
+    let playerY = canvas.height - playerHeight - 10;
+    let playerSpeed = 7;
+    let obstacles = [];
+    let gameOver = false;
 
-    <!-- قسم الدخول كزائر -->
-    <div id="guestSection">
-        <button onclick="guestLogin()">الدخول كزائر</button>
-    </div>
+    // تحريك اللاعب
+    document.addEventListener("keydown", (e) => {
+        if (gameOver) return;
 
-    <!-- أدوات المدير (تحميل صورة) -->
-    <div id="adminControls">
-        <input type="file" id="imageInput" accept="image/*" onchange="uploadImage()">
-    </div>
+        if (e.key === "ArrowLeft" && playerX > 0) {
+            playerX -= playerSpeed;
+        } else if (e.key === "ArrowRight" && playerX < canvas.width - playerWidth) {
+            playerX += playerSpeed;
+        }
+    });
 
-    <script>
-        const correctPassword = "1234"; // قم بتغييرها لكلمة مرورك الخاصة
+    // إنشاء العوائق
+    function createObstacle() {
+        const obstacleWidth = Math.random() * 50 + 30; // عرض العائق بين 30 و 80
+        const obstacleX = Math.random() * (canvas.width - obstacleWidth);
+        obstacles.push({ x: obstacleX, y: 0, width: obstacleWidth, height: 30 });
+    }
 
-        // تحميل الصورة المحفوظة إذا وُجدت
-        window.onload = function() {
-            const savedImage = localStorage.getItem("profileImage");
-            if (savedImage) {
-                document.getElementById("profileImage").src = savedImage;
-            }
-        };
+    // رسم اللاعب
+    function drawPlayer() {
+        ctx.fillStyle = "green";
+        ctx.fillRect(playerX, playerY, playerWidth, playerHeight);
+    }
 
-        function login() {
-            const password = document.getElementById("passwordInput").value;
-            if (password === correctPassword) {
-                document.getElementById("adminControls").style.display = "block";
-                document.getElementById("loginSection").style.display = "none";
-                document.getElementById("guestSection").style.display = "none";
-            } else {
-                alert("كلمة المرور غير صحيحة!");
+    // رسم العوائق
+    function drawObstacles() {
+        ctx.fillStyle = "red";
+        obstacles.forEach(obstacle => {
+            ctx.fillRect(obstacle.x, obstacle.y, obstacle.width, obstacle.height);
+        });
+    }
+
+    // تحديث مكان العوائق
+    function updateObstacles() {
+        obstacles.forEach(obstacle => {
+            obstacle.y += 3; // سرعة نزول العائق
+        });
+        obstacles = obstacles.filter(obstacle => obstacle.y < canvas.height); // إزالة العوائق التي خرجت من الشاشة
+    }
+
+    // التحقق من الاصطدام
+    function checkCollision() {
+        for (let obstacle of obstacles) {
+            if (
+                playerX < obstacle.x + obstacle.width &&
+                playerX + playerWidth > obstacle.x &&
+                playerY < obstacle.y + obstacle.height &&
+                playerY + playerHeight > obstacle.y
+            ) {
+                gameOver = true;
+                document.getElementById("gameOverMessage").style.display = "block";
             }
         }
+    }
 
-        function guestLogin() {
-            document.getElementById("guestSection").style.display = "none";
-            // لا يظهر خيار تحميل الصورة للزوار
-            document.getElementById("adminControls").style.display = "none";
-            // إظهار الصورة المحفوظة إن كانت موجودة
-            const savedImage = localStorage.getItem("profileImage");
-            if (savedImage) {
-                document.getElementById("profileImage").src = savedImage;
-            }
-        }
+    // تحديث اللعبة
+    function updateGame() {
+        if (gameOver) return;
 
-        function uploadImage() {
-            const file = document.getElementById("imageInput").files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(event) {
-                    document.getElementById("profileImage").src = event.target.result;
-                    localStorage.setItem("profileImage", event.target.result); // حفظ الصورة
-                };
-                reader.readAsDataURL(file);
-            }
-        }
-    </script>
+        ctx.clearRect(0, 0, canvas.width, canvas.height); // مسح الشاشة
+        drawPlayer();
+        drawObstacles();
+        updateObstacles();
+        checkCollision();
+    }
+
+    // بدء اللعبة
+    function startGame() {
+        obstacles = [];
+        gameOver = false;
+        document.getElementById("gameOverMessage").style.display = "none";
+        setInterval(createObstacle, 1500); // إنشاء عائق كل 1.5 ثانية
+        setInterval(updateGame, 1000 / 60); // تحديث اللعبة بمعدل 60 إطار في الثانية
+    }
+
+    // إعادة تشغيل اللعبة عند الضغط
+    document.getElementById("gameOverMessage").addEventListener("click", startGame);
+
+    startGame(); // بدء اللعبة عند تحميل الصفحة
+</script>
 
 </body>
 </html>
