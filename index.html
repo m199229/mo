@@ -8,6 +8,7 @@
         body { text-align: center; font-family: Arial, sans-serif; direction: rtl; }
         img { max-width: 200px; border-radius: 10px; margin-top: 20px; }
         #adminControls { display: none; margin-top: 20px; }
+        #loginSection, #guestSection { margin-top: 20px; }
     </style>
 </head>
 <body>
@@ -21,6 +22,11 @@
     <div id="loginSection">
         <input type="password" id="passwordInput" placeholder="أدخل كلمة السر">
         <button onclick="login()">تسجيل الدخول</button>
+    </div>
+
+    <!-- قسم الدخول كزائر -->
+    <div id="guestSection">
+        <button onclick="guestLogin()">الدخول كزائر</button>
     </div>
 
     <!-- أدوات المدير (تحميل صورة) -->
@@ -44,8 +50,20 @@
             if (password === correctPassword) {
                 document.getElementById("adminControls").style.display = "block";
                 document.getElementById("loginSection").style.display = "none";
+                document.getElementById("guestSection").style.display = "none";
             } else {
                 alert("كلمة المرور غير صحيحة!");
+            }
+        }
+
+        function guestLogin() {
+            document.getElementById("guestSection").style.display = "none";
+            // لا يظهر خيار تحميل الصورة للزوار
+            document.getElementById("adminControls").style.display = "none";
+            // إظهار الصورة المحفوظة إن كانت موجودة
+            const savedImage = localStorage.getItem("profileImage");
+            if (savedImage) {
+                document.getElementById("profileImage").src = savedImage;
             }
         }
 
