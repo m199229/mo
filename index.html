@@ -54,6 +54,14 @@
             margin-top: 10px;
             border: 3px solid #007bff;
         }
+        .input-field {
+            width: 100%;
+            padding: 8px;
+            margin-top: 5px;
+        }
+        .save-btn {
+            background-color: green;
+        }
     </style>
 </head>
 <body>
@@ -62,89 +70,19 @@
     مرحبًا بكم في موقعي الشخصي!
 </header>
 
-<section>
-    <h2>تحميل صورة شخصية</h2>
-    <input type="file" id="imageUpload" accept="image/*">
-    <br>
-    <img id="profileImage" src="" class="hidden">
-
-    <button onclick="toggleSection('personalInfo')">البيانات الشخصية</button>
-    <div id="personalInfo" class="content hidden">
-        <p><strong>العنوان:</strong> المملكة العربية السعودية – عرعر</p>
-        <p><strong>رقم الهاتف:</strong> 966539670969</p>
-        <p><strong>البريد الإلكتروني:</strong> mohamedyosif6@gmail.com</p>
-        <p><strong>تاريخ الميلاد:</strong> February 9, 1992</p>
-        <p><strong>الجنسية:</strong> سوداني</p>
-    </div>
-
-    <button onclick="toggleSection('education')">التعليم</button>
-    <div id="education" class="content hidden">
-        <ul>
-            <li>ماجستير هندسة الإتصالات، جامعة العلوم والتقانة، 2018</li>
-            <li>بكالاريوس هندسة النظم الإلكترونية والحاسوب مرتبة الشرف، جامعة العلوم والتقانة، كلية الهندسة، 2015</li>
-        </ul>
-    </div>
-
-    <button onclick="toggleSection('certifications')">الشهادات والتراخيص</button>
-    <div id="certifications" class="content hidden">
-        <ul>
-            <li>شهادة تدريب المدربين، المجلس الأمريكي - الكندي للتدريب المهني.</li>
-            <li>تحليل بيانات الأعمال، مركز Certify Training.</li>
-            <li>حزمة تحليل البيانات "Microsoft Power BI، Python، Excel، SQL"، مركز Progress Training.</li>
-            <li>تدريب المدربين على "برنامج تنمية المؤسسات وتشجيع الاستثمار"، منظمة الأمم المتحدة للتنمية الصناعية UNIDO ITPO البحرين.</li>
-        </ul>
-    </div>
-
-    <button onclick="toggleSection('experience')">الخبرات</button>
-    <div id="experience" class="content hidden">
-        <h3>الوظيفة بدوام كامل (2019-2023)</h3>
-        <p><strong>جامعة العلوم والتكنولوجيا</strong> – كلية الهندسة – قسم هندسة النظم الإلكترونية والحاسوب، أم درمان، السودان.</p>
-        <p><strong>المسمى الوظيفي:</strong> محاضر</p>
-        <ul>
-            <li>تصميم الأنظمة الرقمية باستخدام Verilog HDL</li>
-            <li>تصميم الحواسيب الصغيرة</li>
-            <li>مقدمة في هندسة معمارية الحاسوب</li>
-            <li>علم المواد والهندسة</li>
-            <li>تصميم نظم الحاسوب الدقيق</li>
-        </ul>
-    </div>
-
-    <button onclick="toggleSection('skills')">المهارات</button>
-    <div id="skills" class="content hidden">
-        <ul>
-            <li>تصميم الدوائر التناظرية (Analog Design)</li>
-            <li>تصميم الدوائر الرقمية (Digital Design)</li>
-            <li>معالجة الإشارات الرقمية (Digital Signal Processing)</li>
-            <li>العمل مع المتحكمات الدقيقة (Microcontrollers) والمعالجات الدقيقة (Microprocessors)</li>
-            <li>خبرة في Raspberry Pi</li>
-        </ul>
-    </div>
+<!-- شاشة تسجيل الدخول -->
+<section id="loginSection">
+    <h2>تسجيل الدخول</h2>
+    <input type="password" id="passwordInput" placeholder="أدخل كلمة المرور">
+    <button onclick="checkPassword()">تسجيل الدخول</button>
+    <p id="errorMessage" style="color: red;" class="hidden">كلمة المرور غير صحيحة!</p>
 </section>
 
-<script>
-    function toggleSection(id) {
-        var section = document.getElementById(id);
-        if (section.classList.contains("hidden")) {
-            section.classList.remove("hidden");
-        } else {
-            section.classList.add("hidden");
-        }
-    }
-
-    document.getElementById('imageUpload').addEventListener('change', function(event) {
-        var file = event.target.files[0];
-        if (file) {
-            var reader = new FileReader();
-            reader.onload = function(e) {
-                var img = document.getElementById('profileImage');
-                img.src = e.target.result;
-                img.classList.remove("hidden");
-            }
-            reader.readAsDataURL(file);
-        }
-    });
-</script>
-
-</body>
-</html>
-
+<!-- المحتوى الرئيسي -->
+<section id="mainContent" class="hidden">
+    <h2>الصورة الشخصية</h2>
+    <div id="adminControls" class="hidden">
+        <input type="file" id="imageUpload" accept="image/*">
+        <br>
+    </div>
+    <img id="profile
