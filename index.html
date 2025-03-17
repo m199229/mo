@@ -1,77 +1,56 @@
- <div className="p-4 max-w-2xl mx-auto">
-      {!loggedIn && (
-        <div className="mb-4">
+import React, { useState } from "react";
+
+const correctPassword = "1234"; // قم بتغييرها لكلمة المرور التي تريدها
+
+export default function PersonalWebsite() {
+  const [password, setPassword] = useState("");
+  const [loggedIn, setLoggedIn] = useState(false);
+  const [image, setImage] = useState(localStorage.getItem("profileImage") || "https://via.placeholder.com/150");
+
+  const handleLogin = () => {
+    if (password === correctPassword) {
+      setLoggedIn(true);
+    } else {
+      alert("كلمة المرور غير صحيحة");
+    }
+  };
+
+  const handleImageUpload = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImage(reader.result);
+        localStorage.setItem("profileImage", reader.result);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  return (
+    <div style={{ textAlign: "center", padding: "20px" }}>
+      <h1>مرحبًا بك في موقعي الشخصي</h1>
+      <img
+        src={image}
+        alt="Profile"
+        style={{ width: "150px", height: "150px", borderRadius: "50%", border: "2px solid black" }}
+      />
+      {loggedIn ? (
+        <div>
+          <input type="file" accept="image/*" onChange={handleImageUpload} />
+        </div>
+      ) : (
+        <div>
+          <p>يجب تسجيل الدخول لتعديل الصورة</p>
           <input
             type="password"
             placeholder="أدخل كلمة المرور"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="border p-2 rounded w-full mb-2"
           />
-          <button
-            onClick={handleLogin}
-            className="bg-blue-500 text-white px-4 py-2 rounded w-full"
-          >
-            تسجيل الدخول
-          </button>
+          <button onClick={handleLogin}>تسجيل الدخول</button>
         </div>
       )}
-
-      <div className="text-center mb-4">
-        {image && <img src={image} alt="صورة شخصية" className="w-32 h-32 rounded-full mx-auto" />}
-        {loggedIn && (
-          <input type="file" onChange={handleImageUpload} className="mt-2" />
-        )}
-      </div>
-
-      {[
-        { title: "العنوان", content: "المملكة العربية السعودية – عرعر" },
-        { title: "رقم الهاتف", content: "966539670969" },
-        { title: "البريد الإلكتروني", content: "mohamedyosif6@gmail.com" },
-        { title: "تاريخ الميلاد", content: "February 9, 1992" },
-        { title: "الجنسية", content: "Sudanese" },
-        { title: "التعليم", content: (
-          <ul>
-            <li>ماجستير هندسة الإتصالات، جامعة العلوم والتقانة 2018</li>
-            <li>بكلاريوس هندسة النظم الإلكترونية والحاسوب مرتبة الشرف، جامعة العلوم والتقانة، كلية الهندسة 2015</li>
-          </ul>
-        )},
-        { title: "الشهادات والتراخيص", content: (
-          <ul>
-            <li>شهادة تدريب المدربين، المجلس الأمريكي - الكندي للتدريب المهني.</li>
-            <li>تحليل بيانات الأعمال، مركز Certify Training.</li>
-            <li>حزمة تحليل البيانات (Power BI, Python, Excel, SQL)، مركز Progress Training.</li>
-            <li>تدريب المدربين على برنامج تنمية المؤسسات وتشجيع الاستثمار، منظمة UNIDO ITPO البحرين.</li>
-          </ul>
-        )},
-        { title: "الخبرات", content: (
-          <ul>
-            <li>محاضر، جامعة العلوم والتكنولوجيا (2019-2023)</li>
-            <li>مساعد تدريس متعاون، جامعة العلوم والتكنولوجيا (2016-2018)</li>
-          </ul>
-        )},
-        { title: "المهارات", content: (
-          <ul>
-            <li>تصميم الدوائر التناظرية والرقمية</li>
-            <li>معالجة الإشارات الرقمية</li>
-            <li>العمل مع المتحكمات الدقيقة والمعالجات الدقيقة</li>
-            <li>خبرة في Raspberry Pi</li>
-          </ul>
-        )},
-        { title: "اللغات", content: "إجادة تامة للغتين العربية والإنجليزية" }
-      ].map((section, index) => (
-        <div key={index} className="mb-4">
-          <button
-            className="bg-gray-200 w-full text-left p-2 rounded"
-            onClick={() => toggleSection(section.title)}
-          >
-            {section.title}
-          </button>
-          {showSections[section.title] && (
-            <div className="p-2 border rounded mt-2">{section.content}</div>
-          )}
-        </div>
-      ))}
     </div>
   );
 }
